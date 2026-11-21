@@ -379,6 +379,8 @@ body{--fig-bg:var(--surface)}
 .pens .pw i{display:block;border-radius:50%;background:currentColor}
 .pens .sep{width:1px;align-self:stretch;background:var(--board-muted);opacity:.4;margin:0 2px;flex:none}
 #pen{bottom:auto!important;right:auto!important}
+.b-main{scrollbar-gutter:stable}
+html{scrollbar-gutter:stable}
 </style>
 
 <header class="top"><div class="top-in">
@@ -1618,8 +1620,8 @@ $('#tPlus').onclick=()=>{TM.left+=60;drawTimer()};$('#tMinus').onclick=()=>{TM.l
 
 /* pen */
 const cv=$('#pen'),cx=cv.getContext('2d');let penColor='#f2b36b',drawingNow=false,penW=1.5;
-function sizePen(){const m=$('#bMain'),c=$('#bContent'),dpr=devicePixelRatio||1;const w=m.clientWidth,h=Math.max(m.clientHeight,(c?c.offsetTop+c.offsetHeight+40:0));
-  if(cv.width===Math.round(w*dpr)&&cv.height===Math.round(h*dpr))return;
+function sizePen(){const m=$('#bMain'),c=$('#bContent'),dpr=devicePixelRatio||1;const pb=parseFloat(getComputedStyle(m).paddingBottom)||0,w=m.clientWidth,h=Math.max(m.clientHeight,Math.floor(c?c.offsetTop+c.offsetHeight+pb:0));
+  if(Math.abs(cv.width-Math.round(w*dpr))<=2&&Math.abs(cv.height-Math.round(h*dpr))<=2)return;
   let keep=null;if(cv.width&&cv.height){try{keep=document.createElement('canvas');keep.width=cv.width;keep.height=cv.height;keep.getContext('2d').drawImage(cv,0,0)}catch(e){keep=null}}
   cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px';cx.setTransform(1,0,0,1,0,0);if(keep)cx.drawImage(keep,0,0);cx.setTransform(dpr,0,0,dpr,0,0)}
 addEventListener('error',e=>{if(/ResizeObserver loop/.test(e.message||'')){e.stopImmediatePropagation();e.preventDefault()}},true);let penRaf=0;try{new ResizeObserver(()=>{if(!S.board||penRaf)return;penRaf=requestAnimationFrame(()=>{penRaf=0;sizePen()})}).observe($('#bContent'))}catch(e){}
